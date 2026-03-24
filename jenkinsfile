@@ -81,11 +81,12 @@ steps{
 
 stage('K8s Deployment') {
     steps {
-        // Inject kubeconfig as KUBECONFIG environment variable
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-            // kubectl will use this kubeconfig
-      sh 'kubectl apply -f task67.yml'
-           
+            sh '''
+            export KUBECONFIG=$KUBECONFIG
+            kubectl get nodes
+            kubectl apply -f task67.yml
+            '''
         }
     }
 }

@@ -79,6 +79,15 @@ steps{
 
 }
 
+stage('K8s Deployment') {
+    steps {
+        // Inject kubeconfig as KUBECONFIG environment variable
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+            // kubectl will use this kubeconfig
+           
+        }
+    }
+}
 stage('k8s_dep'){
 steps{
 

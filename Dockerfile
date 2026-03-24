@@ -1,14 +1,9 @@
-# Use Java 17 base image
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
 
-# Set working directory
 WORKDIR /app
 
-# Copy jar file into container
 COPY target/tes-institute-1.0.jar app.jar
 
-# Expose port
-EXPOSE 8081
+EXPOSE 8080
 
-# Run the application
 ENTRYPOINT ["java","-jar","app.jar"]

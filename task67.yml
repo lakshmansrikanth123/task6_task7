@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: tes-container
-        image: varsha0411/chittiimg:v1  
+        image: varsha0411/srikanthimg:v1  
         ports:
         - containerPort: 8080
 ---

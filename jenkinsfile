@@ -44,7 +44,7 @@ post {
 stage('build_img'){
 
 steps{
- sh 'docker build -t srikimg .'
+ sh 'docker build -t srikanthimg .'
 
 }
 
@@ -53,7 +53,7 @@ steps{
 stage('tag_img'){
 
 steps{
- sh 'docker tag srikimg varsha0411/srikimg:v1'
+ sh 'docker tag srikanthimg varsha0411/srikanthimg:v1'
 
 }
 
@@ -73,7 +73,7 @@ stage('Login to Docker Hub') {
 stage('docker_push'){
 
 steps{
- sh 'docker push varsha0411/srikimg:v1'
+ sh 'docker push varsha0411/srikanthimg:v1'
 
 }
 

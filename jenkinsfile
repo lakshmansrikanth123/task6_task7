@@ -60,16 +60,16 @@ steps{
 }
 
 stage('Login to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-cred',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                }
-            }
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'docker-cred',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )]) {
+            sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
         }
+    }
+}
 stage('docker_push'){
 
 steps{
@@ -82,7 +82,7 @@ steps{
 stage('k8s_dep'){
 steps{
 
-sh'kubectl -f apply task67.yml'
+sh 'kubectl apply -f task67.yml'
 }
 
 }		

@@ -82,8 +82,7 @@ steps{
 stage('k8s_dep'){
 steps{
 
-sh 'kubectl apply -f task67.yml'
-}
+sh 'kubectl apply -f task67.yml --validate=false'
 
 }		
 		

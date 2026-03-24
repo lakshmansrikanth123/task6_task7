@@ -1,0 +1,82 @@
+pipeline{
+tools{
+maven 'mymave'
+}
+agent any
+stages{
+
+stage('checkout'){
+
+steps{
+
+checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/lakshmansrikanth123/task6_task7.git']])
+}
+
+}
+
+stage('clean_package'){
+
+steps{
+ sh 'mvn clean package'
+
+}
+
+}
+
+stage('build_img'){
+
+steps{
+ sh 'docker build -it srikimg .'
+
+}
+
+}
+
+stage('tag_img'){
+
+steps{
+ sh 'docker tag srikimg varsha0411/srikimg:v1'
+
+}
+
+}
+
+stage('Login to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'docke-cred',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
+            }
+        }
+stage('docker_push'){
+
+steps{
+ sh 'docker push varsha0411/srikimg:v1'
+
+}
+
+}
+
+stage('k8s_dep'){
+steps{
+
+sh'kubectl -f apply task67.yml'
+}
+
+}		
+		
+		
+
+
+
+}
+
+
+
+
+
+}

@@ -11,6 +11,15 @@ steps{
 
 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/lakshmansrikanth123/task6_task7.git']])
 }
+post {
+                success {
+                    emailext(
+                        subject: "checkout Success",
+                        body: "checkout completed",
+                        to: "srikanth.korla225@gmail.com"
+                    )
+                }
+            }
 
 }
 
@@ -20,6 +29,15 @@ steps{
  sh 'mvn clean package'
 
 }
+post {
+                success {
+                    emailext(
+                        subject: "cleanpackage Success",
+                        body: "cleanpackage completed",
+                        to: "srikanth.korla225@gmail.com"
+                    )
+                }
+            }
 
 }
 

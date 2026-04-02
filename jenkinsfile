@@ -1,89 +1,100 @@
-pipeline {
-    agent any
-	tools {
-	maven 'mymave'
-	jdk 'myjdk'
-	}
+pipeline{
+tools{
+maven 'mymave'
+}
+agent any
+stages{
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/lakshmansrikanth123/poultry-healthy-hens-java.git']])
-            }
-        }
+stage('checkout'){
 
-        stage('Build') {
-            steps {
-                sh 'mvn clean package'
-            }
-        }
+steps{
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonarkube') {
-                    sh 'mvn sonar:sonar'
+checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/lakshmansrikanth123/task6_task7.git']])
+}
+post {
+                success {
+                    emailext(
+                        subject: "checkout Success",
+                        body: "checkout completed",
+                        to: "srikanth.korla225@gmail.com"
+                    )
                 }
             }
-        }
 
-
-
-        stage('JENKINS TO NEXUS') {
-            steps {
-              withMaven(globalMavenSettingsConfig: 'settings.xml', jdk: 'myjdk', maven: 'mymave', traceability: true) {
-             sh 'mvn deploy'
-             }
-            }
-        }
-stage('Download WAR') {
-  steps {
-    withCredentials([usernamePassword(
-        credentialsId: 'nexus-creds',
-        usernameVariable: 'NEXUS_USER',
-        passwordVariable: 'NEXUS_PASS'
-    )]) {
-        sh '''
-        wget --user=$NEXUS_USER --password=$NEXUS_PASS \
-        http://100.31.69.74:8081/repository/maven-releases/com/poultry/healthy-hens/1.0/healthy-hens-1.0.war
-        '''
-    }
-  }
 }
 
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t varsha0411/srikanthfullflow:v1 .'
-            }
-        }
-		stage('Login to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+stage('clean_package'){
+
+steps{
+ sh 'mvn clean package'
+
+}
+post {
+                success {
+                    emailext(
+                        subject: "cleanpackage Success",
+                        body: "cleanpackage completed",
+                        to: "srikanth.korla225@gmail.com"
+                    )
                 }
             }
-        }
 
-        stage('Push Docker Image') {
-            steps {
-                sh 'docker push varsha0411/srikanthfullflow:v1'
-            }
-        }
-		        stage('K8s Deployment') {
-            steps {
-              withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                sh '''
-                export KUBECONFIG=$KUBECONFIG
-                kubectl get nodes
-                kubectl apply -f fulldep.yml
-                '''
+}
+
+stage('build_img'){
+
+steps{
+ sh 'docker build -t srikanthimg .'
+
+}
+
+}
+
+stage('tag_img'){
+
+steps{
+ sh 'docker tag srikanthimg varsha0411/srikanthimg:v1'
+
+}
+
+}
+
+stage('Login to Docker Hub') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'docker-cred',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )]) {
+            sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
         }
     }
 }
+stage('docker_push'){
 
-       
+steps{
+ sh 'docker push varsha0411/srikanthimg:v1'
+
+}
+
+}
+
+stage('K8s Deployment') {
+    steps {
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+            sh '''
+            export KUBECONFIG=$KUBECONFIG
+            kubectl get nodes
+            kubectl apply -f task67.yml
+            '''
+        }
     }
+}
+
+
+
+
+
+
+}
 }
